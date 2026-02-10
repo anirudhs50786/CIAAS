@@ -1,4 +1,4 @@
-package com.motocart.ciaas_microservice.entity;
+package com.motocart.ciaas_microservice.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role implements GrantedAuthority {
+public class RoleEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

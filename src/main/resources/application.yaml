@@ -34,6 +34,13 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
 logging:
   level:
     root: INFO

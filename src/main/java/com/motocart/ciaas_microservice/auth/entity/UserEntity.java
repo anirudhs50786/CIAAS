@@ -1,4 +1,4 @@
-package com.motocart.ciaas_microservice.entity;
+package com.motocart.ciaas_microservice.auth.entity;
 
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @Builder
-public class ApplicationUser implements UserDetails {
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,9 @@ public class ApplicationUser implements UserDetails {
     @Column(name = "user_name", unique = true)
     private String userName;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -31,7 +34,7 @@ public class ApplicationUser implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private Set<Role> authorities;
+    private Set<RoleEntity> authorities;
 
     @Column(name = "created_on", updatable = false)
     private Instant createdOn;
@@ -40,7 +43,7 @@ public class ApplicationUser implements UserDetails {
     private int accountStatus;
 
     @Override
-    public Set<Role> getAuthorities() {
+    public Set<RoleEntity> getAuthorities() {
         return this.authorities;
     }
 

@@ -1,6 +1,6 @@
-package com.motocart.ciaas_microservice.service;
+package com.motocart.ciaas_microservice.auth.service;
 
-import com.motocart.ciaas_microservice.dao.UserDao;
+import com.motocart.ciaas_microservice.auth.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User name is not valid"));
+        return userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User name is not valid"));
     }
 }
