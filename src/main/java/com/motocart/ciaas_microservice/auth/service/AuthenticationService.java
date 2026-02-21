@@ -1,5 +1,6 @@
 package com.motocart.ciaas_microservice.auth.service;
 
+import com.motocart.ciaas_microservice.auth.dto.request.SignInRequestDTO;
 import com.motocart.ciaas_microservice.auth.dto.request.SignUpRequestDTO;
 import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
 import com.motocart.ciaas_microservice.auth.entity.UserEntity;
@@ -9,6 +10,8 @@ import com.motocart.ciaas_microservice.auth.validators.AuthValidationService;
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import com.motocart.ciaas_microservice.types.Roles;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +30,24 @@ public class AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+
     private final AuthValidationService authValidationService;
 
-    public AuthenticationService(PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserRepository userRepository, AuthValidationService authValidationService) {
+    private final JWTService jwtService;
+
+    public AuthenticationService(PasswordEncoder passwordEncoder,
+                                 RoleRepository roleRepository,
+                                 UserRepository userRepository,
+                                 AuthenticationManager authenticationManager,
+                                 AuthValidationService authValidationService,
+                                 JWTService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
         this.authValidationService = authValidationService;
+        this.jwtService = jwtService;
     }
 
     public UserEntity registerCustomerUser(SignUpRequestDTO signUpRequestDTO) {
@@ -45,12 +59,18 @@ public class AuthenticationService {
 
         UserEntity user = UserEntity.builder()
                 .userName(signUpRequestDTO.getUsername())
+                .email(signUpRequestDTO.getEmail())
                 .password(encodedPassword)
                 .authorities(authorities)
                 .createdOn(Instant.now())
                 .accountStatus(AccountStatus.ACTIVE_INCOMPLETE.getStatusCode())
                 .build();
         return userRepository.save(user);
+    }
+
+    public String verifyCredentials(SignInRequestDTO signInRequestDTO) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getLoginId(), signInRequestDTO.getPassword()));
+        return jwtService.generateToken(signInRequestDTO.getLoginId());
     }
 
 }

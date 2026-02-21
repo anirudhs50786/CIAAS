@@ -25,11 +25,11 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
 
     @PostMapping("/register")
     public SignUpResponseDTO registerUser(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
-        return MapperUtil.entityToDto(authenticationService.registerCustomerUser(signUpRequestDTO));
+        return MapperUtil.toSignUpResponse(authenticationService.registerCustomerUser(signUpRequestDTO));
     }
 
     @PostMapping("/login")
     public SignInResponseDTO loginUser(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
-        return null;
+        return MapperUtil.toSignInResponse(authenticationService.verifyCredentials(signInRequestDTO), signInRequestDTO);
     }
 }
