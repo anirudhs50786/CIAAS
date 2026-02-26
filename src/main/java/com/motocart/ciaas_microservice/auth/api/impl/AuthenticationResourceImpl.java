@@ -1,17 +1,14 @@
 package com.motocart.ciaas_microservice.auth.api.impl;
 
 import com.motocart.ciaas_microservice.auth.api.AuthenticationResource;
-import com.motocart.ciaas_microservice.auth.dto.reponse.SignInResponseDTO;
+import com.motocart.ciaas_microservice.auth.dto.reponse.AuthenticationResponseDTO;
 import com.motocart.ciaas_microservice.auth.dto.reponse.SignUpResponseDTO;
 import com.motocart.ciaas_microservice.auth.dto.request.SignInRequestDTO;
 import com.motocart.ciaas_microservice.auth.dto.request.SignUpRequestDTO;
 import com.motocart.ciaas_microservice.auth.service.AuthenticationService;
 import com.motocart.ciaas_microservice.util.MapperUtil;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,7 +26,12 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
     }
 
     @PostMapping("/login")
-    public SignInResponseDTO loginUser(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
-        return MapperUtil.toSignInResponse(authenticationService.verifyCredentials(signInRequestDTO), signInRequestDTO);
+    public AuthenticationResponseDTO loginUser(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
+        return MapperUtil.toAuthenticationResponse(authenticationService.verifyCredentials(signInRequestDTO));
+    }
+
+    @PostMapping("/refresh")
+    public AuthenticationResponseDTO getNewAccessToken(@RequestHeader("Refresh-Token") String refreshToken) {
+        return MapperUtil.toAuthenticationResponse(authenticationService.getNewAccessToken(refreshToken));
     }
 }

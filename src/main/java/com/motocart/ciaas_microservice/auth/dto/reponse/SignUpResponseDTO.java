@@ -14,5 +14,5 @@ import java.io.Serializable;
 public class SignUpResponseDTO implements Serializable {
 
     private int userId;
-    private String userName;
+    private String username;
 }

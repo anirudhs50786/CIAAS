@@ -7,11 +7,14 @@ import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import com.motocart.ciaas_microservice.auth.repository.RoleRepository;
 import com.motocart.ciaas_microservice.auth.repository.UserRepository;
 import com.motocart.ciaas_microservice.auth.validators.AuthValidationService;
+import com.motocart.ciaas_microservice.auth.vo.JwtVO;
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import com.motocart.ciaas_microservice.types.Roles;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,18 +39,21 @@ public class AuthenticationService {
 
     private final JWTService jwtService;
 
+    private final RefreshTokenService refreshTokenService;
+
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  RoleRepository roleRepository,
                                  UserRepository userRepository,
                                  AuthenticationManager authenticationManager,
                                  AuthValidationService authValidationService,
-                                 JWTService jwtService) {
+                                 JWTService jwtService, RefreshTokenService refreshTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.authValidationService = authValidationService;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public UserEntity registerCustomerUser(SignUpRequestDTO signUpRequestDTO) {
@@ -58,7 +64,7 @@ public class AuthenticationService {
         authorities.add(userRoleEntity);
 
         UserEntity user = UserEntity.builder()
-                .userName(signUpRequestDTO.getUsername())
+                .username(signUpRequestDTO.getUsername())
                 .email(signUpRequestDTO.getEmail())
                 .password(encodedPassword)
                 .authorities(authorities)
@@ -68,9 +74,36 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public String verifyCredentials(SignInRequestDTO signInRequestDTO) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getLoginId(), signInRequestDTO.getPassword()));
-        return jwtService.generateToken(signInRequestDTO.getLoginId());
+    public JwtVO verifyCredentials(SignInRequestDTO signInRequestDTO) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getLoginId(), signInRequestDTO.getPassword()));
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        return createJwtVO(user.getUserId());
     }
 
+    public JwtVO getNewAccessToken(String refreshToken) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        int userId = user.getUserId();
+        refreshTokenService.validateRefreshToken(userId, refreshToken);
+        JwtVO jwtVO = createJwtVO(userId);
+        refreshTokenService.processTokenRefresh(jwtVO, refreshToken);
+        return jwtVO;
+    }
+
+    /**
+     * Creates a JwtVO instance with access token and refresh token
+     *
+     * @param userId - user id for whom the tokens are being generated
+     * @return JwtVO instance
+     */
+    private JwtVO createJwtVO(int userId) {
+        String accessToken = jwtService.generateAccessToken(String.valueOf(userId));
+        return JwtVO.builder()
+                .userId(userId)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(jwtService.getAccessTokenExpiration())
+                .refreshToken(refreshTokenService.generateRefreshToken())
+                .refreshTokenExpiresIn(refreshTokenService.getRefreshTokenExpiration())
+                .build();
+    }
 }

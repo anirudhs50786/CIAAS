@@ -21,7 +21,7 @@ public class UserEntity implements UserDetails {
     private Integer userId;
 
     @Column(name = "user_name", unique = true)
-    private String userName;
+    private String username;
 
     @Column(name = "email", unique = true)
     private String email;
@@ -54,7 +54,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.username;
     }
 
     @Override
