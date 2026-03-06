@@ -24,4 +24,9 @@ public class RoleEntity implements GrantedAuthority {
     public String getAuthority() {
         return this.authority;
     }
+
+    @Override
+    public String toString() {
+        return this.authority;
+    }
 }

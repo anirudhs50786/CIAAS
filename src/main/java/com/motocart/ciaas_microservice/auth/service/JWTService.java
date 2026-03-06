@@ -1,6 +1,5 @@
 package com.motocart.ciaas_microservice.auth.service;
 
-import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -30,8 +29,9 @@ public class JWTService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String subject) {
+    public String generateAccessToken(String subject, String roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -43,8 +43,12 @@ public class JWTService {
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRoles(String token) {
+        return extractClaim(token, claims -> claims.get("roles", String.class));
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -60,9 +64,9 @@ public class JWTService {
                 .getPayload();
     }
 
-    public boolean validateToken(String token, UserEntity userEntity) {
-        final String userName = extractUsername(token);
-        return (userName.equals(userEntity.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token, String userId) {
+        final String extractedUserId = extractUserId(token);
+        return (extractedUserId.equals(userId) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

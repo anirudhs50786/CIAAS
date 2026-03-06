@@ -10,6 +10,7 @@ import com.motocart.ciaas_microservice.auth.validators.AuthValidationService;
 import com.motocart.ciaas_microservice.auth.vo.JwtVO;
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import com.motocart.ciaas_microservice.types.Roles;
+import com.motocart.ciaas_microservice.util.MapperUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -77,15 +78,16 @@ public class AuthenticationService {
     public JwtVO verifyCredentials(SignInRequestDTO signInRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getLoginId(), signInRequestDTO.getPassword()));
         UserEntity user = (UserEntity) authentication.getPrincipal();
-        return createJwtVO(user.getUserId());
+        String roles = MapperUtil.authoritiesToString(authentication.getAuthorities());
+        return createJwtVO(user.getUserId(), roles);
     }
 
     public JwtVO getNewAccessToken(String refreshToken) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        int userId = user.getUserId();
+        int userId = Integer.parseInt((String) authentication.getPrincipal());
+        String roles = MapperUtil.authoritiesToString(authentication.getAuthorities());
         refreshTokenService.validateRefreshToken(userId, refreshToken);
-        JwtVO jwtVO = createJwtVO(userId);
+        JwtVO jwtVO = createJwtVO(userId, roles);
         refreshTokenService.processTokenRefresh(jwtVO, refreshToken);
         return jwtVO;
     }
@@ -94,10 +96,11 @@ public class AuthenticationService {
      * Creates a JwtVO instance with access token and refresh token
      *
      * @param userId - user id for whom the tokens are being generated
+     * @param roles - roles of the user
      * @return JwtVO instance
      */
-    private JwtVO createJwtVO(int userId) {
-        String accessToken = jwtService.generateAccessToken(String.valueOf(userId));
+    private JwtVO createJwtVO(int userId, String roles) {
+        String accessToken = jwtService.generateAccessToken(String.valueOf(userId), roles);
         return JwtVO.builder()
                 .userId(userId)
                 .accessToken(accessToken)
