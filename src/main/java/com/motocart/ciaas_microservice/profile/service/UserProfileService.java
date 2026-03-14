@@ -1,17 +1,13 @@
 package com.motocart.ciaas_microservice.profile.service;
 
-import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import com.motocart.ciaas_microservice.profile.dto.UserProfileDTO;
-import com.motocart.ciaas_microservice.profile.entity.UserAddressEntity;
 import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import com.motocart.ciaas_microservice.profile.repository.UserProfileRepository;
+import com.motocart.ciaas_microservice.util.AuthHelper;
 import com.motocart.ciaas_microservice.util.MapperUtil;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserProfileService {
@@ -22,24 +18,20 @@ public class UserProfileService {
         this.userProfileRepository = userProfileRepository;
     }
 
+    public Optional<UserProfileEntity> getUserProfile() {
+        int userId = AuthHelper.getAuthUserId();
+        return userProfileRepository.findByUserId(userId);
+    }
+
     public void createUserProfile(UserProfileDTO userProfileDTO) {
-        UserEntity user = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int userId = AuthHelper.getAuthUserId();
 
         var userAddressEntityList = userProfileDTO.getUserAddressDTOList()
                 .stream()
                 .map(MapperUtil::toUserAddressEntity)
                 .toList();
 
-        UserProfileEntity userProfileEntity = UserProfileEntity.builder()
-                .userId(user.getUserId())
-                .dateOfBirth(userProfileDTO.getDateOfBirth())
-                .profileImageUrl(userProfileDTO.getProfileImageUrl())
-                .gender(userProfileDTO.getGender())
-                .firstName(userProfileDTO.getFirstName())
-                .lastName(userProfileDTO.getLastName())
-                .phoneNumber(userProfileDTO.getPhoneNumber())
-                .deliveryAddresses(userAddressEntityList)
-                .build();
+        UserProfileEntity userProfileEntity = MapperUtil.toUserProfileEntity(userId, userAddressEntityList, userProfileDTO);
         userProfileRepository.save(userProfileEntity);
     }
 }

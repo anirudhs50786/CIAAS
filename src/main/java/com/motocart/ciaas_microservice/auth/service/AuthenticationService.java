@@ -1,7 +1,7 @@
 package com.motocart.ciaas_microservice.auth.service;
 
-import com.motocart.ciaas_microservice.auth.dto.request.SignInRequestDTO;
-import com.motocart.ciaas_microservice.auth.dto.request.SignUpRequestDTO;
+import com.motocart.library.common.dto.request.SignInRequestDTO;
+import com.motocart.library.common.dto.request.SignUpRequestDTO;
 import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
 import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import com.motocart.ciaas_microservice.auth.repository.RoleRepository;
@@ -10,6 +10,7 @@ import com.motocart.ciaas_microservice.auth.validators.AuthValidationService;
 import com.motocart.ciaas_microservice.auth.vo.JwtVO;
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import com.motocart.ciaas_microservice.types.Roles;
+import com.motocart.ciaas_microservice.util.AuthHelper;
 import com.motocart.ciaas_microservice.util.MapperUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -84,7 +85,7 @@ public class AuthenticationService {
 
     public JwtVO getNewAccessToken(String refreshToken) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int userId = Integer.parseInt((String) authentication.getPrincipal());
+        int userId = AuthHelper.getAuthUserId();
         String roles = MapperUtil.authoritiesToString(authentication.getAuthorities());
         refreshTokenService.validateRefreshToken(userId, refreshToken);
         JwtVO jwtVO = createJwtVO(userId, roles);

@@ -2,6 +2,7 @@ package com.motocart.ciaas_microservice.auth.filters;
 
 import com.motocart.ciaas_microservice.auth.repository.UserRepository;
 import com.motocart.ciaas_microservice.auth.service.JWTService;
+import com.motocart.library.security.Principal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
 
-    public JwtAuthenticationFilter(JWTService jwtService, UserRepository userRepository) {
+    public JwtAuthenticationFilter(JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
@@ -33,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         String userId = null;
         List<SimpleGrantedAuthority> roles = null;
+        String username = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
@@ -41,11 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .split(","))
                     .map(SimpleGrantedAuthority::new)
                     .toList();
+            username = jwtService.extractUsername(token);
         }
 
         if (userId != null && !roles.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.validateToken(token, userId)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, roles);
+                Principal principal = new Principal(Integer.parseInt(userId), username);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal, null, roles);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }

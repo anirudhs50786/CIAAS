@@ -1,16 +1,19 @@
 package com.motocart.ciaas_microservice.util;
 
-import com.motocart.ciaas_microservice.auth.dto.reponse.AuthenticationResponseDTO;
-import com.motocart.ciaas_microservice.auth.dto.reponse.SignUpResponseDTO;
+import com.motocart.library.common.dto.response.AuthenticationResponseDTO;
+import com.motocart.library.common.dto.response.SignUpResponseDTO;
 import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import com.motocart.ciaas_microservice.auth.vo.JwtVO;
 import com.motocart.ciaas_microservice.profile.dto.UserAddressDTO;
+import com.motocart.ciaas_microservice.profile.dto.UserProfileDTO;
 import com.motocart.ciaas_microservice.profile.entity.UserAddressEntity;
+import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.List;
 
-public class MapperUtil {
+public final class MapperUtil {
 
     public static SignUpResponseDTO toSignUpResponse(UserEntity user) {
         return SignUpResponseDTO.builder()
@@ -48,5 +51,29 @@ public class MapperUtil {
                 .map(Object::toString)
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
+    }
+
+    public static UserProfileEntity toUserProfileEntity(int userId, List<UserAddressEntity> userAddressEntityList, UserProfileDTO userProfileDTO) {
+        return UserProfileEntity.builder()
+                .userId(userId)
+                .dateOfBirth(userProfileDTO.getDateOfBirth())
+                .profileImageUrl(userProfileDTO.getProfileImageUrl())
+                .gender(userProfileDTO.getGender())
+                .firstName(userProfileDTO.getFirstName())
+                .lastName(userProfileDTO.getLastName())
+                .phoneNumber(userProfileDTO.getPhoneNumber())
+                .deliveryAddresses(userAddressEntityList)
+                .build();
+    }
+
+    public static UserProfileDTO toUserProfileDTO(UserProfileEntity userProfileEntity) {
+        return UserProfileDTO.builder()
+                .dateOfBirth(userProfileEntity.getDateOfBirth())
+                .profileImageUrl(userProfileEntity.getProfileImageUrl())
+                .gender(userProfileEntity.getGender())
+                .firstName(userProfileEntity.getFirstName())
+                .lastName(userProfileEntity.getLastName())
+                .phoneNumber(userProfileEntity.getPhoneNumber())
+                .build();
     }
 }

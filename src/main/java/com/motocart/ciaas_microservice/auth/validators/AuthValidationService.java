@@ -1,6 +1,6 @@
 package com.motocart.ciaas_microservice.auth.validators;
 
-import com.motocart.ciaas_microservice.auth.dto.request.SignUpRequestDTO;
+import com.motocart.library.common.dto.request.SignUpRequestDTO;
 import com.motocart.ciaas_microservice.auth.repository.UserRepository;
 import com.motocart.ciaas_microservice.auth.service.PasswordPolicyService;
 import org.springframework.stereotype.Service;
