@@ -1,7 +1,6 @@
 package com.motocart.ciaas_microservice.profile.api;
 
-import com.motocart.ciaas_microservice.profile.dto.UserProfileDTO;
-import org.springframework.http.ResponseEntity;
+import com.motocart.library.common.dto.UserProfileDTO;
 
 public interface UserProfileResource {
 

@@ -1,6 +1,6 @@
 package com.motocart.ciaas_microservice.profile.service;
 
-import com.motocart.ciaas_microservice.profile.dto.UserProfileDTO;
+import com.motocart.library.common.dto.UserProfileDTO;
 import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import com.motocart.ciaas_microservice.profile.repository.UserProfileRepository;
 import com.motocart.ciaas_microservice.util.AuthHelper;

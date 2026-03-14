@@ -1,6 +1,6 @@
 package com.motocart.ciaas_microservice.profile.entity;
 
-import com.motocart.ciaas_microservice.types.Profile;
+import com.motocart.library.common.types.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
