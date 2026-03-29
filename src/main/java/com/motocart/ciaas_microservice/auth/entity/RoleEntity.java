@@ -18,6 +18,7 @@ public class RoleEntity implements GrantedAuthority {
     @Column(name = "role_id")
     private Integer roleId;
 
+    @Column(name = "role_name")
     private String authority;
 
     @Override

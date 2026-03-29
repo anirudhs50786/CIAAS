@@ -1,15 +1,14 @@
 package com.motocart.ciaas_microservice.profile.api.impl;
 
 import com.motocart.ciaas_microservice.profile.api.UserProfileResource;
+import com.motocart.library.common.annotation.MotocartAPI;
 import com.motocart.library.common.dto.UserProfileDTO;
 import com.motocart.ciaas_microservice.profile.service.UserProfileService;
 import com.motocart.ciaas_microservice.util.MapperUtil;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/profile")
+@MotocartAPI("/profile")
 public class UserProfileResourceImpl implements UserProfileResource {
 
     private final UserProfileService userProfileService;

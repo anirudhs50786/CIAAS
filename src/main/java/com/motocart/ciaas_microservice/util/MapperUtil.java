@@ -1,5 +1,8 @@
 package com.motocart.ciaas_microservice.util;
 
+import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
+import com.motocart.ciaas_microservice.types.AccountStatus;
+import com.motocart.library.common.dto.request.SignUpRequestDTO;
 import com.motocart.library.common.dto.response.AuthenticationResponseDTO;
 import com.motocart.library.common.dto.response.SignUpResponseDTO;
 import com.motocart.ciaas_microservice.auth.entity.UserEntity;
@@ -10,8 +13,10 @@ import com.motocart.ciaas_microservice.profile.entity.UserAddressEntity;
 import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public final class MapperUtil {
 
@@ -74,6 +79,17 @@ public final class MapperUtil {
                 .firstName(userProfileEntity.getFirstName())
                 .lastName(userProfileEntity.getLastName())
                 .phoneNumber(userProfileEntity.getPhoneNumber())
+                .build();
+    }
+
+    public static UserEntity toUserEntity(SignUpRequestDTO signUpRequestDTO, String encodedPassword, Set<RoleEntity> authorities) {
+        return UserEntity.builder()
+                .username(signUpRequestDTO.getUsername())
+                .email(signUpRequestDTO.getEmail())
+                .password(encodedPassword)
+                .authorities(authorities)
+                .createdOn(Instant.now())
+                .accountStatus(AccountStatus.ACTIVE_INCOMPLETE.getStatusCode())
                 .build();
     }
 }

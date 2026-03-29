@@ -1,7 +1,7 @@
 server:
   port: 8064
   servlet:
-    context-path: /closedcart/api
+    context-path: /closedcart
 
 # Spring boot admin server configs
 management:

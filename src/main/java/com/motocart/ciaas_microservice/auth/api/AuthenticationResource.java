@@ -6,7 +6,7 @@ import com.motocart.library.common.dto.request.SignInRequestDTO;
 import com.motocart.library.common.dto.request.SignUpRequestDTO;
 
 public interface AuthenticationResource {
-    SignUpResponseDTO registerUser(SignUpRequestDTO signUpRequestDTO);
+    SignUpResponseDTO registerCustomerUser(SignUpRequestDTO signUpRequestDTO);
 
     AuthenticationResponseDTO loginUser(SignInRequestDTO signInRequestDTO);
 
