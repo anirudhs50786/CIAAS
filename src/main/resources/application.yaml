@@ -47,7 +47,7 @@ eureka:
 jwt:
   secret:
     private: ${JWT_PRIVATE_KEY}
-    public: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtGPGqnDuUpA6dgLyw033wrJhfKMdkl37qZLC0bccokwDSUSQywEa7XUqPF/ZImup9paD8NhuX8Apqk6LNY0B2256JabHyLYBHze0FbLOdmh4AOFUgS85bn5MFA6OsyUOoAPHAxb+uF0Yls4QgSAOx8kst6GKus7kNIEh03Z3u/41dai9w/LfySc/P8vhVmcuiW4R3Mg/yVy5e5uTEPfUDIBY4bscGy8s9p3FlUasEHTnX5S5KF/UteBgbjtowNjR/gkY9YpDh6IWdWVXuONeZjMpEoEqHquPXWWW+4IZpr0QzLJ9p3O0JickX0vYNQk8Q2r2fClrfdKX/qMJmq/PHQIDAQAB
+    public: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9U1Sa8fGpbvpnJ17NZGIzLCJd1Vl3BPba67Tdz64f/AkIRChbPBaarCBmqd9MpS9N3o4lQCZJcTFisQ8fqLD+n+wFprQTE5pITTXUz3j1AlY14+UvHFsCxJ6nxJMcONzT9pyX8iy8YyFqjOyp1sjFysAsa7de7qmDcAKhskMC9KhnSQAciTgS7LZwc446BC4UHjrbyeQZl5oeBBiaGC6ZySLRz2H0Pl+emo6yR+y8Dt6QDOyGIA/f4xJetEVCXNx95h8UH7mQGoVo6Wo30QAksFRCT4tKrFfq4NXFVQ6/Kyeu4fsZvA1bmeUKur9xXt39qDlJaFxa5qHyiEg6z2ZQIDAQAB
   expiration:
     access-token: 900000 # 15 minutes
     refresh-token: 604800000 # 7 days
@@ -56,6 +56,9 @@ jwt:
 moto-cart:
   security:
     header-auth:
+      enabled: false
+  kafka:
+    notification:
       enabled: false
 
 logging:

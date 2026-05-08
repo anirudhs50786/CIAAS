@@ -1,6 +1,7 @@
-package com.motocart.ciaas_microservice.auth.kafka;
+package com.motocart.ciaas_microservice.kafka;
 
 import com.motocart.library.common.event.NotificationEvent;
+import com.motocart.library.kafka.KafkaTopics;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ public class NotificationEventProducer {
     }
 
         public void sendNotificationEvent(NotificationEvent event) {
-        kafkaTemplate.send("notification-topic", event);
+        kafkaTemplate.send(KafkaTopics.NOTIFICATION_EVENTS, event);
     }
 
 }

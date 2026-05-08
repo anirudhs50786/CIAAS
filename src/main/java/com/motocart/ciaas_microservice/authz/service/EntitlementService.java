@@ -15,6 +15,7 @@ import com.motocart.library.common.types.Permission;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -49,6 +50,7 @@ public class EntitlementService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Cacheable(value = CacheNames.USER_ENTITLEMENT_CACHE, key = "'user:' + #userId")
     public EntitlementsDTO getAllEntitlements(int userId) {
         Set<String> roles = userRepository.findById(userId)
@@ -79,9 +81,9 @@ public class EntitlementService {
             if(permissionName == null) {
                 continue;
             }
-            if(userPermission.getEffect() == PermissionEffect.REVOKE) {
+            if (userPermission.getEffect() == PermissionEffect.REVOKE) {
                 permissions.remove(permissionName);
-            } else {
+            } else if (userPermission.getEffect() == PermissionEffect.GRANT) {
                 permissions.add(permissionName);
             }
         }
@@ -90,7 +92,7 @@ public class EntitlementService {
 
     public void canAccess(Permission forPermission) {
         Set<String> userPermissions = getAllEntitlementsForLoggedInUser().getPermissions();
-        if(!userPermissions.contains(forPermission.name())) {
+        if(!userPermissions.contains(forPermission.toString())) {
             log.warn("User is not authorized to access {}", forPermission);
             throw new AccessDeniedException("User is not authorized to access " + forPermission);
         }

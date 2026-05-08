@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface RoleRepository extends JpaRepository<RoleEntity, Integer> {
 
-    @Query(value = "SELECT * FROM roles where authority = :authority", nativeQuery = true)
+    @Query(value = "SELECT * FROM roles where role_name = :authority", nativeQuery = true)
     Optional<RoleEntity> findByAuthority(@Param("authority") String authority);
 }

@@ -1,6 +1,6 @@
 package com.motocart.ciaas_microservice.auth.service;
 
-import com.motocart.ciaas_microservice.auth.kafka.NotificationEventProducer;
+import com.motocart.ciaas_microservice.kafka.NotificationEventProducer;
 import com.motocart.library.common.dto.request.SignInRequestDTO;
 import com.motocart.library.common.dto.request.SignUpRequestDTO;
 import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
@@ -46,14 +46,14 @@ public class AuthenticationService {
 
     private final RefreshTokenService refreshTokenService;
 
-    private final NotificationEventProducer notificationEventProducer;
+    private final NotificationEventBuilder notificationEventBuilder;
 
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  RoleRepository roleRepository,
                                  UserRepository userRepository,
                                  AuthenticationManager authenticationManager,
                                  AuthValidationService authValidationService,
-                                 JWTService jwtService, RefreshTokenService refreshTokenService, NotificationEventProducer notificationEventProducer) {
+                                 JWTService jwtService, RefreshTokenService refreshTokenService, NotificationEventProducer notificationEventProducer, NotificationEventBuilder notificationEventBuilder) {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
@@ -61,7 +61,7 @@ public class AuthenticationService {
         this.authValidationService = authValidationService;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
-        this.notificationEventProducer = notificationEventProducer;
+        this.notificationEventBuilder = notificationEventBuilder;
     }
 
     public UserEntity registerCustomerUser(SignUpRequestDTO signUpRequestDTO) {
@@ -81,7 +81,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new EntityNotFoundException(role + " not defined")))
                 .collect(Collectors.toSet());
         UserEntity userEntity = userRepository.save(MapperUtil.toUserEntity(dto, encodedPassword, authorities));
-        sendUserRegNotification(userEntity);
+        notificationEventBuilder.sendUserRegNotification(userEntity);
         return userEntity;
     }
 
@@ -126,25 +126,4 @@ public class AuthenticationService {
                 .build();
     }
 
-    /**
-     * Build the Kafka notification event and send it asynchronously
-     * @param user the user entity
-     */
-    @Async("ciaasExecutor")
-    private void sendUserRegNotification(UserEntity user) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("recipientName", user.getUsername());
-        payload.put("loginLink", "dummy url");
-        NotificationType type = user.getAuthorities().stream()
-                .map(RoleEntity::getAuthority).
-                anyMatch(s -> s.equals(Roles.ROLE_ADMIN.name())) ?
-                NotificationType.ADMIN_REGISTRATION : NotificationType.USER_REGISTRATION;
-
-        NotificationEvent notificationEvent = NotificationEvent.builder()
-                .notificationType(type)
-                .recipientEmail(user.getEmail())
-                .payload(payload)
-                .build();
-        notificationEventProducer.sendNotificationEvent(notificationEvent);
-    }
 }

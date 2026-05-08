@@ -29,6 +29,7 @@ public final class MapperUtil {
 
     public static AuthenticationResponseDTO toAuthenticationResponse(JwtVO jwtVO) {
         return AuthenticationResponseDTO.builder()
+                .tokenType("Bearer")
                 .accessToken(jwtVO.getAccessToken())
                 .accessTokenExpiresIn(jwtVO.getAccessTokenExpiresIn())
                 .refreshToken(jwtVO.getRefreshToken())

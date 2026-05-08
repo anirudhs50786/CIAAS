@@ -2,8 +2,10 @@ package com.motocart.ciaas_microservice.auth.entity;
 
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
@@ -13,6 +15,8 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity implements UserDetails {
 
     @Id
@@ -28,7 +32,7 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role_junction",
             joinColumns = {@JoinColumn(name = "user_id")},
