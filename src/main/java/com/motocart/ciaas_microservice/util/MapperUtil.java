@@ -1,22 +1,25 @@
 package com.motocart.ciaas_microservice.util;
 
 import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
+import com.motocart.ciaas_microservice.auth.entity.UserEntity;
+import com.motocart.ciaas_microservice.auth.vo.JwtVO;
+import com.motocart.ciaas_microservice.profile.entity.UserAddressEntity;
+import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import com.motocart.ciaas_microservice.types.AccountStatus;
+import com.motocart.library.common.dto.UserAddressDTO;
+import com.motocart.library.common.dto.UserDetailDTO;
+import com.motocart.library.common.dto.UserProfileDTO;
+import com.motocart.library.common.dto.UserSummaryDTO;
 import com.motocart.library.common.dto.request.SignUpRequestDTO;
 import com.motocart.library.common.dto.response.AuthenticationResponseDTO;
 import com.motocart.library.common.dto.response.SignUpResponseDTO;
-import com.motocart.ciaas_microservice.auth.entity.UserEntity;
-import com.motocart.ciaas_microservice.auth.vo.JwtVO;
-import com.motocart.library.common.dto.UserAddressDTO;
-import com.motocart.library.common.dto.UserProfileDTO;
-import com.motocart.ciaas_microservice.profile.entity.UserAddressEntity;
-import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class MapperUtil {
 
@@ -92,5 +95,63 @@ public final class MapperUtil {
                 .createdOn(Instant.now())
                 .accountStatus(AccountStatus.ACTIVE_INCOMPLETE.getStatusCode())
                 .build();
+    }
+
+    public static List<UserSummaryDTO> toUserSummaryList(List<UserEntity> users) {
+        return users.stream()
+                .map(u -> UserSummaryDTO.builder()
+                        .userId(u.getUserId())
+                        .username(u.getUsername())
+                        .email(u.getEmail())
+                        .accountStatus(u.getAccountStatus())
+                        .createdOn(u.getCreatedOn())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public static UserDetailDTO toUserDetailDTO(UserEntity user, UserProfileEntity profile) {
+        UserDetailDTO.UserDetailDTOBuilder builder = UserDetailDTO.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .accountStatus(user.getAccountStatus())
+                .createdOn(user.getCreatedOn());
+
+        if (profile != null) {
+            builder.firstName(profile.getFirstName())
+                    .lastName(profile.getLastName())
+                    .phoneNumber(profile.getPhoneNumber())
+                    .gender(profile.getGender())
+                    .dateOfBirth(profile.getDateOfBirth())
+                    .profileImageUrl(profile.getProfileImageUrl())
+                    .deliveryAddresses(profile.getDeliveryAddresses().stream()
+                            .map(a -> UserAddressDTO.builder()
+                                    .userAddressId(a.getUserAddressId())
+                                    .addressLine(a.getAddressLine())
+                                    .landmark(a.getLandmark())
+                                    .cityName(a.getCityName())
+                                    .zipCode(a.getZipCode())
+                                    .state(a.getState())
+                                    .addressType(a.getAddressType())
+                                    .country(a.getCountry())
+                                    .isDefault(a.isDefault())
+                                    .createdAt(a.getCreatedAt())
+                                    .build())
+                            .collect(Collectors.toList()));
+        }
+
+        return builder.build();
+    }
+
+    public static List<UserSummaryDTO> toUserSummaryDTO(List<UserSummaryDTO> users) {
+        return users.stream()
+                .map(u -> UserSummaryDTO.builder()
+                        .userId(u.getUserId())
+                        .username(u.getUsername())
+                        .email(u.getEmail())
+                        .accountStatus(u.getAccountStatus())
+                        .createdOn(u.getCreatedOn())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

@@ -68,12 +68,7 @@ public class AuthenticationService {
         return registerUser(signUpRequestDTO, Set.of(Roles.ROLE_USER));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public UserEntity registerAdminUser(SignUpRequestDTO signUpRequestDTO) {
-        return registerUser(signUpRequestDTO, Set.of(Roles.ROLE_USER, Roles.ROLE_ADMIN));
-    }
-
-    private UserEntity registerUser(SignUpRequestDTO dto, Set<Roles> roles) {
+    public UserEntity registerUser(SignUpRequestDTO dto, Set<Roles> roles) {
         authValidationService.validateSignUp(dto);
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         Set<RoleEntity> authorities = roles.stream()

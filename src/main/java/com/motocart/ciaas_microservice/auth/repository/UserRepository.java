@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM users WHERE user_name = :userName)", nativeQuery = true)
     boolean existsByUserName(@Param("userName") String userName);
+
+    @Query(value = "SELECT u.* FROM users u JOIN user_role_junction urj ON u.user_id = urj.user_id JOIN roles r ON urj.role_id = r.role_id WHERE r.authority = :roleName", nativeQuery = true)
+    List<UserEntity> findByAuthoritiesRoleName(@Param("roleName") String roleName);
 }
