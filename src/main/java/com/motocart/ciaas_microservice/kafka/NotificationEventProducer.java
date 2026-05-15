@@ -14,7 +14,7 @@ public class NotificationEventProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-        public void sendNotificationEvent(NotificationEvent event) {
+    public void sendNotificationEvent(NotificationEvent event) {
         kafkaTemplate.send(KafkaTopics.NOTIFICATION_EVENTS, event);
     }
 

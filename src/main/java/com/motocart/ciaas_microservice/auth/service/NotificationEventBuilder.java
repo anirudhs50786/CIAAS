@@ -7,8 +7,6 @@ import com.motocart.library.common.event.NotificationEvent;
 import com.motocart.library.common.types.NotificationType;
 import com.motocart.library.common.types.Roles;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 

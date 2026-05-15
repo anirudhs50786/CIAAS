@@ -39,7 +39,6 @@ public class EntitlementService {
         this.userRepository = userRepository;
     }
 
-    @Cacheable(value = CacheNames.USER_ENTITLEMENT_CACHE, key = "'user:' + #userId")
     public EntitlementsDTO getAllEntitlementsForLoggedInUser() {
         int userId = AuthHelper.getAuthUserId();
         Set<String> roles = AuthHelper.getRoles();
@@ -51,7 +50,6 @@ public class EntitlementService {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Cacheable(value = CacheNames.USER_ENTITLEMENT_CACHE, key = "'user:' + #userId")
     public EntitlementsDTO getAllEntitlements(int userId) {
         Set<String> roles = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException("User not found"))

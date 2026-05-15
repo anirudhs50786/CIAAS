@@ -34,13 +34,13 @@ public class AdminUserResourceImpl implements AdminUserResource {
     @Override
     @GetMapping("/_query")
     public List<UserSummaryDTO> getAllAdminUsers() {
-        return MapperUtil.toUserSummaryDTO(adminUserService.getAllAdminUsers());
+        return adminUserService.getAllAdminUsers();
     }
 
     @Override
     @GetMapping("/customer/_query")
     public List<UserSummaryDTO> getAllCustomerUsers() {
-        return MapperUtil.toUserSummaryDTO(adminUserService.getAllCustomerUsers());
+        return adminUserService.getAllCustomerUsers();
     }
 
     @Override

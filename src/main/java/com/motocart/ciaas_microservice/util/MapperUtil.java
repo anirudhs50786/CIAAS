@@ -142,16 +142,4 @@ public final class MapperUtil {
 
         return builder.build();
     }
-
-    public static List<UserSummaryDTO> toUserSummaryDTO(List<UserSummaryDTO> users) {
-        return users.stream()
-                .map(u -> UserSummaryDTO.builder()
-                        .userId(u.getUserId())
-                        .username(u.getUsername())
-                        .email(u.getEmail())
-                        .accountStatus(u.getAccountStatus())
-                        .createdOn(u.getCreatedOn())
-                        .build())
-                .collect(Collectors.toList());
-    }
 }
