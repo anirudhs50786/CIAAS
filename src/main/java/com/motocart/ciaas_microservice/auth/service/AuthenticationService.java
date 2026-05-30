@@ -111,9 +111,13 @@ public class AuthenticationService {
      * @return JwtVO instance
      */
     private JwtVO createJwtVO(int userId, String roles) {
-        String accessToken = jwtService.generateAccessToken(String.valueOf(userId), roles);
+        String username = AuthHelper.getAuthUsername();
+        String emailId = AuthHelper.getAuthEmailId();
+        String accessToken = jwtService.generateAccessToken(String.valueOf(userId), roles, username, emailId);
         return JwtVO.builder()
                 .userId(userId)
+                .username(username)
+                .email(emailId)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(jwtService.getAccessTokenExpiration())
                 .refreshToken(refreshTokenService.generateRefreshToken())

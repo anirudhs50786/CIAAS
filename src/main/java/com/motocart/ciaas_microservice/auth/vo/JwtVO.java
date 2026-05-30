@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class JwtVO {
 
     private int userId;
+    private String username;
+    private String email;
     private String accessToken;
     private long accessTokenExpiresIn;
     private String refreshToken;

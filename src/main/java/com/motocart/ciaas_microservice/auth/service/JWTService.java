@@ -53,10 +53,11 @@ public class JWTService {
         }
     }
 
-    public String generateAccessToken(String subject, String roles) {
+    public String generateAccessToken(String subject, String roles, String username, String email) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
-        claims.put("username", "dummy");
+        claims.put("username", username);
+        claims.put("emailId", email);
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -104,5 +105,9 @@ public class JWTService {
 
     public String extractUsername(String token) {
         return extractClaim(token, claims -> claims.get("username", String.class));
+    }
+
+    public String extractEmailId(String token) {
+        return extractClaim(token, claims -> claims.get("emailId", String.class));
     }
 }
