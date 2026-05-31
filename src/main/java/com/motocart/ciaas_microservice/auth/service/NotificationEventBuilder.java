@@ -36,7 +36,6 @@ public class NotificationEventBuilder {
             return;
         }
         Map<String, Object> payload = new HashMap<>();
-        payload.put("recipientName", user.getUsername());
         payload.put("loginLink", "dummy url");
         NotificationType type = user.getAuthorities().stream()
                 .map(RoleEntity::getAuthority).
