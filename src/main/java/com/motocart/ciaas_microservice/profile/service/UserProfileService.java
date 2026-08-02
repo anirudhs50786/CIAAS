@@ -1,10 +1,10 @@
 package com.motocart.ciaas_microservice.profile.service;
 
-import com.motocart.library.common.dto.UserProfileDTO;
 import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import com.motocart.ciaas_microservice.profile.repository.UserProfileRepository;
 import com.motocart.ciaas_microservice.util.AuthHelper;
 import com.motocart.ciaas_microservice.util.MapperUtil;
+import com.motocart.library.common.dto.request.UserProfileRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class UserProfileService {
         return userProfileRepository.findByUserId(userId);
     }
 
-    public void createUserProfile(UserProfileDTO userProfileDTO) {
+    public UserProfileEntity createUserProfile(UserProfileRequestDTO userProfileDTO) {
         int userId = AuthHelper.getAuthUserId();
 
         var userAddressEntityList = userProfileDTO.getUserAddressDTOList()
@@ -32,6 +32,6 @@ public class UserProfileService {
                 .toList();
 
         UserProfileEntity userProfileEntity = MapperUtil.toUserProfileEntity(userId, userAddressEntityList, userProfileDTO);
-        userProfileRepository.save(userProfileEntity);
+        return userProfileRepository.save(userProfileEntity);
     }
 }

@@ -82,6 +82,7 @@ public class AuthenticationService {
 
     public JwtVO verifyCredentials(SignInRequestDTO signInRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getLoginId(), signInRequestDTO.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         UserEntity user = (UserEntity) authentication.getPrincipal();
         String roles = MapperUtil.authoritiesToString(authentication.getAuthorities());
         return createJwtVO(user.getUserId(), roles);

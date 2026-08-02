@@ -1,11 +1,12 @@
 package com.motocart.ciaas_microservice.profile.api;
 
-import com.motocart.library.common.dto.UserProfileDTO;
+import com.motocart.library.common.dto.request.UserProfileRequestDTO;
+import com.motocart.library.common.dto.response.UserProfileResponseDTO;
 
 public interface UserProfileResource {
 
-    UserProfileDTO getUserProfile();
+    UserProfileResponseDTO getUserProfile();
 
-    UserProfileDTO createUserProfile(UserProfileDTO userProfileDTO);
+    UserProfileResponseDTO createUserProfile(UserProfileRequestDTO userProfileDTO);
 
 }

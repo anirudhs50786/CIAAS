@@ -8,11 +8,12 @@ import com.motocart.ciaas_microservice.profile.entity.UserProfileEntity;
 import com.motocart.ciaas_microservice.types.AccountStatus;
 import com.motocart.library.common.dto.UserAddressDTO;
 import com.motocart.library.common.dto.UserDetailDTO;
-import com.motocart.library.common.dto.UserProfileDTO;
 import com.motocart.library.common.dto.UserSummaryDTO;
 import com.motocart.library.common.dto.request.SignUpRequestDTO;
+import com.motocart.library.common.dto.request.UserProfileRequestDTO;
 import com.motocart.library.common.dto.response.AuthenticationResponseDTO;
 import com.motocart.library.common.dto.response.SignUpResponseDTO;
+import com.motocart.library.common.dto.response.UserProfileResponseDTO;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Instant;
@@ -62,7 +63,7 @@ public final class MapperUtil {
                 .orElse("");
     }
 
-    public static UserProfileEntity toUserProfileEntity(int userId, List<UserAddressEntity> userAddressEntityList, UserProfileDTO userProfileDTO) {
+    public static UserProfileEntity toUserProfileEntity(int userId, List<UserAddressEntity> userAddressEntityList, UserProfileRequestDTO userProfileDTO) {
         return UserProfileEntity.builder()
                 .userId(userId)
                 .dateOfBirth(userProfileDTO.getDateOfBirth())
@@ -75,8 +76,8 @@ public final class MapperUtil {
                 .build();
     }
 
-    public static UserProfileDTO toUserProfileDTO(UserProfileEntity userProfileEntity) {
-        return UserProfileDTO.builder()
+    public static UserProfileResponseDTO toUserProfileDTO(UserProfileEntity userProfileEntity) {
+        return UserProfileResponseDTO.builder()
                 .dateOfBirth(userProfileEntity.getDateOfBirth())
                 .profileImageUrl(userProfileEntity.getProfileImageUrl())
                 .gender(userProfileEntity.getGender())

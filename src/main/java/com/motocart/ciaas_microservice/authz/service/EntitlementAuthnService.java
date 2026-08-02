@@ -1,31 +1,27 @@
 package com.motocart.ciaas_microservice.authz.service;
 
 import com.motocart.ciaas_microservice.auth.entity.RoleEntity;
-import com.motocart.ciaas_microservice.auth.entity.UserEntity;
 import com.motocart.ciaas_microservice.auth.repository.UserRepository;
 import com.motocart.ciaas_microservice.authz.entity.UserPermissionEntity;
 import com.motocart.ciaas_microservice.authz.repository.PermissionRepository;
 import com.motocart.ciaas_microservice.authz.repository.UserPermissionRepository;
 import com.motocart.ciaas_microservice.types.PermissionEffect;
 import com.motocart.ciaas_microservice.util.AuthHelper;
-import com.motocart.library.cache.CacheNames;
 import com.motocart.library.common.dto.EntitlementsDTO;
 import com.motocart.library.common.exception.GlobalException;
 import com.motocart.library.common.types.Permission;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class EntitlementService {
+public class EntitlementAuthnService {
 
     private final UserPermissionRepository userPermissionRepository;
 
@@ -33,7 +29,7 @@ public class EntitlementService {
 
     private final UserRepository userRepository;
 
-    public EntitlementService(UserPermissionRepository userPermissionRepository, PermissionRepository permissionRepository, UserRepository userRepository) {
+    public EntitlementAuthnService(UserPermissionRepository userPermissionRepository, PermissionRepository permissionRepository, UserRepository userRepository) {
         this.userPermissionRepository = userPermissionRepository;
         this.permissionRepository = permissionRepository;
         this.userRepository = userRepository;
